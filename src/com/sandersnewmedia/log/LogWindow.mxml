@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow
+    xmlns:fx="http://ns.adobe.com/mxml/2009"
+    xmlns:s="library://ns.adobe.com/flex/spark"
+    xmlns:mx="library://ns.adobe.com/flex/mx"
+    width="600" height="400" 
+    title="Log Window"
+    close="closeWindow()">
+    
+    <fx:Style>
+        <![CDATA[
+            .logWindow {
+                background-color: #111113;
+                background-alpha: 1;
+                alpha: 1;
+                horizontal-align: left;
+                text-align: left;
+                header-height: 20;
+                header-colors: #111113, #231f20;
+                color: #ffffff;	            
+                border-alpha: 1;
+                border-color: #111113;
+                border-thickness-left: 5;
+                border-thickness-right: 5;
+                border-thickness-bottom: 5;
+                rounded-bottom-corners: false;
+            }
+        ]]>
+    </fx:Style>
+    
+    <fx:Script>
+        <![CDATA[
+            import mx.core.Application;
+            import mx.core.FlexGlobals;
+            import mx.core.UIComponent;
+            import mx.managers.PopUpManager;
+            
+            private static var window:LogWindow;
+            
+            public static function showLogWindow() : void {
+                //only display one log window at a time
+                if(window == null) {
+                    window = LogWindow(
+                        PopUpManager.createPopUp(
+                            FlexGlobals.topLevelApplication as UIComponent,
+                            LogWindow,
+                            false));
+                    PopUpManager.centerPopUp(window);
+                }
+            }
+            
+            private function closeWindow() : void {             
+                PopUpManager.removePopUp(this);
+                window = null;
+            }
+            
+            private function clearLogs() : void {
+                Logger.clear();
+            }
+            
+            private function copyLogs() : void {
+                System.setClipboard(Logger.text);
+            }
+            
+            private function toggleTimeStamp(event:Event) : void {
+                var show:Boolean = event.target.selected;
+                Logger.toggleTimeStamps(show);
+            }
+            
+            private function toggleChannel(event:Event) : void {
+                var show:Boolean = event.target.selected;
+                Logger.toggleChannels(show);
+            }
+            
+            private function toggleUseHTML(event:Event) : void {
+                var show:Boolean = event.target.selected;
+                Logger.toggleUseHTML(show);
+            }
+        ]]>
+    </fx:Script>
+    
+    <s:VGroup width="100%" height="100%" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
+        
+        <s:HGroup width="100%" gap="20">
+            <s:Button label="Clear Logs" click="clearLogs();" width="80"/>
+            
+            <s:Button label="Copy Logs" click="copyLogs();" width="80"/>
+            
+            <s:CheckBox label="Show Timestamp" selected="{LogConfig.SHOW_TIMESTAMP}" click="toggleTimeStamp(event)"/>
+            
+            <s:CheckBox label="Show Channel" selected="{LogConfig.SHOW_CHANNEL_NAME}" click="toggleChannel(event)"/> 
+            
+            <!-- <mx:CheckBox label="Use HTML" selected="{LogConfig.USE_HTML_FORMATTING}" click="toggleUseHTML(event)"/>  -->        
+        </s:HGroup>
+        
+        <s:HGroup width="100%" height="100%" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0">
+            <s:TextArea width="100%" height="100%" text="{Logger.text}" contentBackgroundColor="#FFFFFF" focusAlpha="0" editable="false" color="#000000" fontFamily="Courier" fontSize="12"/>
+        </s:HGroup>
+        <!--
+        <mx:ViewStack selectedIndex="{LogConfig.USE_HTML_FORMATTING ? 0 : 1}" width="100%" height="100%">
+        <mx:HBox width="100%" height="100%" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0">
+        <mx:TextArea width="100%" height="100%" htmlText="{Logger.text}" backgroundColor="#FFFFFF" focusAlpha="0" editable="false" color="#000000" fontFamily="Courier" fontSize="12"/>
+        </mx:HBox>
+        
+        <mx:HBox width="100%" height="100%" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0">
+        <mx:TextArea width="100%" height="100%" text="{Logger.text}" backgroundColor="#FFFFFF" focusAlpha="0" editable="false" color="#000000" fontFamily="Courier" fontSize="12"/>
+        </mx:HBox>
+        
+        </mx:ViewStack>
+        -->
+        
+    </s:VGroup>
+    
+</s:TitleWindow>
